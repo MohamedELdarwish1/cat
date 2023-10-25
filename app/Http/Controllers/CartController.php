@@ -46,7 +46,6 @@ class CartController extends Controller
         }
 
         return redirect()->route('cart.index')->with('error', 'Item not found in the cart.');
-
     }
 
     public function proceedToPayment()
@@ -63,54 +62,49 @@ class CartController extends Controller
         // session()->forget('cart');
 
         return view('payment');
-
-
     }
 
-     public function processPayment(Request $request)
-{
-    // Validate the form input (e.g., address and telephone number)
-    $request->validate([
-        'address' => 'required',
-        'telephone' => 'required',
-    ]);
-
-    // Get the cart items from the session
-    $cartItems = session()->get('cart', []);
-
-    $totalPrice = 0;
-
-    foreach ($cartItems as $item) {
-        $totalPrice += $item['price'] * $item['quantity'];
-    }
-    //as you mention in the documentation lets assume the customer is alredy authed, so lets assume that i know the current customer
-    $customer = Customer::first();
-    if($customer->store_credit >= $totalPrice)
+    public function processPayment(Request $request)
     {
-         Order::create([
-            'customer_id' => $customer->id,
-            'total' => $totalPrice,
-            'address' => $request->address,
-            'telephone' =>$request->telephone,
+
+        $request->validate([
+            'address' => 'required',
+            'telephone' => 'required',
         ]);
 
-        $customer->store_credit = ( $customer->store_credit - $totalPrice);
-        $customer->save();
 
-        session()->forget('cart');
-        return redirect()->route('transaction-result')->with('success', ' Your Transaction done Successfuly ');
+        $cartItems = session()->get('cart', []);
 
+        $totalPrice = 0;
+
+        foreach ($cartItems as $item) {
+            $totalPrice += $item['price'] * $item['quantity'];
+        }
+        //as you mention in the documentation lets assume the customer is alredy authed, so lets assume that i know the current customer
+        $customer = Customer::first();
+        if ($customer->store_credit >= $totalPrice) {
+            Order::create([
+                'customer_id' => $customer->id,
+                'total' => $totalPrice,
+                'address' => $request->address,
+                'telephone' => $request->telephone,
+            ]);
+
+            $customer->store_credit = ($customer->store_credit - $totalPrice);
+            $customer->save();
+
+            session()->forget('cart');
+            return redirect()->route('transaction-result')->with('success', ' Your Transaction done Successfuly ');
+        } else {
+            return redirect()->route('cart.index')->with('error', 'Your dont have enough store balance .');
+        }
     }
-    else{
-        return redirect()->route('cart.index')->with('error', 'Your dont have enough store balance .');
+
+
+    public function showTransactionResult()
+    {
+        return view('TransactionResult');
     }
-}
-
-
-public function showTransactionResult()
-{
-    return view('TransactionResult');
-}
 
     /**
      * Show the form for creating a new resource.

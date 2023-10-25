@@ -13,34 +13,32 @@ class ItemController extends Controller
      */
     public function index()
     {
-         $items =Item::paginate(10);
-         return view('Items',['items' =>$items]);
+        $items = Item::paginate(10);
+        return view('Items', ['items' => $items]);
     }
     public function addToCart(Request $request, $itemId)
     {
         $item = Item::find($itemId);
-    if (!$item) {
-        return redirect()->route('item.index')->with('error', 'Item not found.');
-    }
+        if (!$item) {
+            return redirect()->route('item.index')->with('error', 'Item not found.');
+        }
 
-    $cart = session()->get('cart', []);
-    if (isset($cart[$itemId])) {
-        $cart[$itemId]['quantity'] += 1;
-    } else {
-        $cart[$itemId] = [
-            'id' => $item->id,
-            'name' => $item->name,
-            'description' => $item->description,
-            'price' => $item->price,
-            'quantity' => 1,
-        ];
-    }
+        $cart = session()->get('cart', []);
+        if (isset($cart[$itemId])) {
+            $cart[$itemId]['quantity'] += 1;
+        } else {
+            $cart[$itemId] = [
+                'id' => $item->id,
+                'name' => $item->name,
+                'description' => $item->description,
+                'price' => $item->price,
+                'quantity' => 1,
+            ];
+        }
 
-    session()->put('cart', $cart);
+        session()->put('cart', $cart);
 
-    return redirect()->route('items.index')->with('success', 'Item added to the cart.');
-
-
+        return redirect()->route('items.index')->with('success', 'Item added to the cart.');
     }
     /**
      * Show the form for creating a new resource.

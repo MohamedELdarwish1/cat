@@ -25,5 +25,5 @@ Route::post('/cart/update', [\App\Http\Controllers\CartController::class, 'updat
 Route::get('/cart/remove/{item}', [\App\Http\Controllers\CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::get('/payment', [\App\Http\Controllers\CartController::class, 'proceedToPayment'])->name('payment');
 Route::post('/cart/payment', [App\Http\Controllers\CartController::class, 'processPayment'])->name('process-payment');
-Route::get('/cart/payment/result/{result}', [App\Http\Controllers\CartController::class, 'showTransactionResult'])->name('transaction-result');
+Route::get('/cart/payment/result/', [App\Http\Controllers\CartController::class, 'showTransactionResult'])->name('transaction-result');
 

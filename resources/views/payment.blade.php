@@ -3,11 +3,12 @@
 
 <div class="row">
     <div class="d-flex justify-content-between mb-4">
-        <h3>Payment</h3>
-
-        <a style=" margin-right: auto;" href="{{ route('cart.index') }}" class="btn btn-success ml-auto">
+        <h3 class="col">Payment</h3>
+        <div class="col text-right">
+        <a  href="{{ route('cart.index') }}" class="btn btn-danger ml-auto">
             Cancel and go back to the shopping cart
         </a>
+        </div>
     </div>
 
 
@@ -21,7 +22,6 @@
         @csrf
         <div class="mb-3">
             <label for="payment_method" class="form-label">Payment Method</label>
-            {{-- <input type="text" name="address" id="address" class="form-control" required> --}}
             <select  name="payment_method"  id="payment_method">
                 <option class="form-control" selected disabled value="Store Credits">Store Credits</option>
             </select>

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Customer;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -81,14 +83,33 @@ class CartController extends Controller
     foreach ($cartItems as $item) {
         $totalPrice += $item['price'] * $item['quantity'];
     }
-    // Update store credits and save the transaction in the database
-    // Implement the necessary logic to update store credits and save the transaction to the database
+    //as you mention in the documentation lets assume the customer is alredy authed, so lets assume that i know the current customer
+    $customer = Customer::first();
+    if($customer->store_credit >= $totalPrice)
+    {
+         Order::create([
+            'customer_id' => $customer->id,
+            'total' => $totalPrice,
+            'address' => $request->address,
+            'telephone' =>$request->telephone,
+        ]);
 
-    // Clear the cart after a successful transaction
-    session()->forget('cart');
+        $customer->store_credit = ( $customer->store_credit - $totalPrice);
+        $customer->save();
 
-    // return redirect()->route('transaction-result', ['result' => 'success']);
-     return redirect()->back()->with('success', 'Success');
+        session()->forget('cart');
+        return redirect()->route('transaction-result')->with('success', ' Your Transaction done Successfuly ');
+
+    }
+    else{
+        return redirect()->route('cart.index')->with('error', 'Your dont have enough store balance .');
+    }
+}
+
+
+public function showTransactionResult()
+{
+    return view('TransactionResult');
 }
 
     /**

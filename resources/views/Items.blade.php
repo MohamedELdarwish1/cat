@@ -86,7 +86,7 @@
                     <td>
                         <form method="post" action="{{ route('cart.add', $item->id) }}">
                             @csrf
-                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
                         </form>
                     </td>
                 </tr>
